@@ -12,9 +12,13 @@ def account(name):
     return {name: [0.0, {TODAY: []}]}
 
 def borrow(arr):
-    if (len(arr) == 3):
+    amount = arr[-1]
+    if (len(arr) == 3 and isnum(amount)):
         obj_list=load()[1]
-        obj_list[0].update({arr[-2] : arr[-1]})
+        if (arr[-2] not in obj_list[0]):
+            obj_list[0].update({arr[-2] : float(amount)})
+        else:
+            obj_list[0][arr[-2]] += float(amount)
         obj_list[1] += float(arr[-1])
         save_object(obj_list, 1)
     else:
@@ -32,51 +36,50 @@ def new(arr):
 
 
 def remove(arr):
-    if (len(arr) >= 2):
-        obj_list = load()
-        del obj_list[arr[1]]
+    obj_list = load()
+    if (len(arr) == 2 and arr[1] in obj_list[0]):
+        del obj_list[0][arr[1]]
         save(obj_list)
     else:
         print("err")
 
 
 def changeto(arr):
-    if (len(arr) == 3):
-        name = arr[0]
-        amount = arr[-1]
-        obj_list = load()
-        diff = obj_list[name][0] - float(amount)
+    obj_list = load()
+    name = arr[0]
+    amount = arr[-1]
+    if (len(arr) == 3 and name in obj_list[0] and isnum(amount)):
+        diff = obj_list[0][name][0] - float(amount)
         if (diff == 0):
             return
-        obj_list[name][0] = float(amount)
-        if obj_list[name][0] - float(amount) > 0:
-            obj_list[name][1][TODAY].append(diff)
+        obj_list[0][name][0] = float(amount)
+        if obj_list[0][name][0] - float(amount) > 0:
+            obj_list[0][name][1][TODAY].append(diff)
         else:
-            obj_list[name][1][TODAY].append(-diff)
+            obj_list[0][name][1][TODAY].append(-diff)
         save(obj_list)
     else:
         print("err")
 
 
 def plus_or_minus(arr, pm):
-    if (len(arr) == 3):
-        name = arr[0]
-        amount = arr[-1]
+    obj_list = load()
+    name = arr[0]
+    amount = arr[-1]
+    if (len(arr) == 3 and name in obj_list[0] and isnum(amount)):
         if (amount == 0):
             return
         obj_list = load()
-        obj_list[name][1][TODAY].append(float(amount) * pm)
-        obj_list[name][0] += float(amount) * pm
+        obj_list[0][name][1][TODAY].append(float(amount) * pm)
+        obj_list[0][name][0] += float(amount) * pm
         save(obj_list)
     else:
         print("err")
 
 
 def to(arr):
-    new_arr = arr[::2] + [arr[-1]]
-    plus_or_minus(new_arr, -1)
-    new_arr = arr[-2::-2] + [arr[-1]]
-    plus_or_minus(new_arr, 1)
+    plus_or_minus(arr[::2] + [arr[-1]], -1)
+    plus_or_minus(arr[-2::-2] + [arr[-1]], 1)
 
 
 def info(list, dflag, accflag):
@@ -94,10 +97,16 @@ def info(list, dflag, accflag):
 
     for acc_key, acc_value in list[0].items():
         print("Account name:", acc_key, "Money: ", acc_value[0])
-        print("diffs:", end='')
+        print("\tdiffs:", end='')
         for in_key, in_value in acc_value[1].items():
             print("\t", in_key, " : ", in_value)
 
+def isnum(value):
+    try:
+        float(value)
+        return True
+    except:
+        return False
 
 def help():
     print("""
@@ -157,9 +166,21 @@ def load():
         obj_list = EMPTY
     return obj_list
 
+command = {
+    "help" : lambda : help(),
+    "clear" : lambda : save(EMPTY),
+    "ainfo" : lambda : info(load(), False, True),
+    "dinfo" : lambda : info(load(), True, False),
+    "finfo" : lambda : info(load(), True, True),
+    "new" : lambda : new(inp),
+    "remove" : lambda : remove(inp),
+    "borrow" : lambda : borrow(inp),
+    "changeto" : lambda : changeto(inp),
+    "plus" : lambda : plus_or_minus(inp, 1),
+    "minus" : lambda : plus_or_minus(inp, -1)
+}
 
-inp = sys.argv
-del inp[0]
+inp = sys.argv[1::]
 ACCOUNT_LIST = load()[0]
 DUTY_LIST = load()[1]
 inp_len = len(inp)
@@ -168,42 +189,13 @@ inp_len = len(inp)
 if (inp_len == 0):
     exit()
 
-elif (inp[-inp_len] == "help"):
-    help()
+if (inp[-inp_len] in command):
+    command[inp[-inp_len]]()
 
-elif (inp[-inp_len] == "clear"):
-    save(EMPTY)
+elif (inp_len > 2):
 
-elif (inp[-inp_len] == "ainfo"):
-    info(load(), False, True)
+    if (inp[-inp_len + 1] in command):
+        command[inp[-inp_len + 1]]()
 
-elif (inp[-inp_len] == "dinfo"):
-    info(load(), True, False)
-
-elif (inp[-inp_len] == "finfo"):
-    info(load(), True, True)
-
-elif (inp[-inp_len] == "new"):
-    new(inp)
-
-elif (inp[-inp_len] == "remove"):
-    remove(inp)
-
-elif(inp_len > 2):
-    if (inp[-inp_len] in ACCOUNT_LIST):
-        if (inp[-inp_len + 1] == "changeto"):
-            changeto(inp)
-
-        elif (inp[-inp_len + 1] == "plus"):
-            plus_or_minus(inp, 1)
-
-        elif (inp[-inp_len + 1] == "minus"):
-            plus_or_minus(inp, -1)
-
-        elif (inp[-inp_len + 1] == "to" and inp[-inp_len + 2] in ACCOUNT_LIST):
-            to(inp)
-
-    elif (inp[-inp_len] == "borrow"):
-        borrow(inp)
 else:
     print("err")
