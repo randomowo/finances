@@ -8,21 +8,24 @@ TODAY = datetime.datetime.now().strftime("%Y-%m-%d")
 FILEPATH = "/tmp/finances.pkl"
 EMPTY = [{}, [{}, 0.0]]
 
+
 def account(name):
     return {name: [0.0, {TODAY: []}]}
 
+
 def borrow(arr):
     if (len(arr) == 3):
-        obj_list=load()[1]
-        obj_list[0].update({arr[-2] : arr[-1]})
+        obj_list = load()[1]
+        obj_list[0].update({arr[-2]: arr[-1]})
         obj_list[1] += float(arr[-1])
         save_object(obj_list, 1)
     else:
         print("err")
 
+
 def new(arr):
     if (len(arr) == 2):
-        obj_list=load()[0]
+        obj_list = load()[0]
         if obj_list is None:
             obj_list = {}
         obj_list.update(account(arr[1]))
@@ -123,7 +126,7 @@ def help():
 
                 finfo - display information of all account and thier differences and information of borrows
                     finfo
-                
+
                 dinfo - display information of borrows
                     dinfo
 
