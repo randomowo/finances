@@ -11,10 +11,10 @@ EMPTY = [{}, [{}, 0.0]]
 
 def account(name):
     """returns empty account with inputed name
-    
+
     Arguments:
         name {str} -- name for account
-    
+
     Returns:
         dict -- empty account
     """
@@ -23,7 +23,7 @@ def account(name):
 
 def borrow(arr):
     """adds new information about borrows
-    
+
     Arguments:
         arr {list} -- inputed information
     """
@@ -42,7 +42,7 @@ def borrow(arr):
 
 def new(arr):
     """create a new account
-    
+
     Arguments:
         arr {list} -- inputed command
     """
@@ -58,7 +58,7 @@ def new(arr):
 
 def remove(arr):
     """remove from data
-    
+
     Arguments:
         arr {list} -- inputed command
     """
@@ -95,7 +95,7 @@ def changeto(arr):
 
 def plus_or_minus(arr, pm):
     """increases or decreases saving on account
-    
+
     Arguments:
         arr {list} -- inputed command
         pm {int} -- flag that says which operetion to do
@@ -126,7 +126,7 @@ def to(arr):
 
 def info(list, binfo, accflag):
     """print stored information about finances
-    
+
     Arguments:
         list {dict} -- stored information
         binfo {bool} -- flag that says print information only about borrows
@@ -153,10 +153,10 @@ def info(list, binfo, accflag):
 
 def isnum(value):
     """chech is value is number
-    
+
     Arguments:
         value {any} -- any value
-    
+
     Returns:
         bool -- if value is float then True else False
     """
@@ -210,7 +210,7 @@ def help():
 
 def save_object(obj, type):
     """saves object into file
-    
+
     Arguments:
         obj {dict} -- object to save 
         type {int} -- flag that says which data type save
@@ -222,7 +222,7 @@ def save_object(obj, type):
 
 def save(data):
     """saves data in file
-    
+
     Arguments:
         data {list} -- all data
     """
@@ -232,7 +232,7 @@ def save(data):
 
 def load():
     """load data from file
-    
+
     Returns:
         list -- data from file
     """
